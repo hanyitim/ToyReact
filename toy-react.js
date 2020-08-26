@@ -15,7 +15,11 @@ class ElementWrapper{
         if(name.match(/^on([\s\S]+)$/)){
             this.root.addEventListener(RegExp.$1.replace(/^[\s\S]/,c=>c.toLowerCase()),value);
         }else{
-            this.root.setAttribute(name,value);
+            if(/^className$/.test(name)){
+                this.root.setAttribute('class',value);
+            }else{
+                this.root.setAttribute(name,value);
+            }
         }
     }
     appendChild(component){
@@ -86,6 +90,9 @@ export function createElement(type,attribute,...children){
         for(let child of children){
             if(typeof child === 'string'){
                 child = new TextWrapper(child);
+            }
+            if(child === null){
+                continue;
             }
             if(Object.prototype.toString.call(child) === '[object Array]'){
                 inserChildren(child);
