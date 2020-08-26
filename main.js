@@ -6,13 +6,20 @@ import {
 
 class MyComponent extends Component{
     constructor(){
-        super()
+        super();
+        this.state = {
+            a:1,
+            b:2
+        }
     }
     render(){
         return (
             <div>
-                <div>my Component</div>
-                {this.children}
+                <h1>my Component</h1>
+                {/* 这里如果a没有toString，toy-react的type判断会出问题，没有textwraper包住，导致异常 */}
+                <p>{this.state.a.toString()}</p> 
+                <p>{this.state.b.toString()}</p> 
+                <button onClick={()=>{this.setState({a:++this.state.a})}}>add</button>
             </div>
         )
     }
