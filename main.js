@@ -5,6 +5,9 @@ import {
 } from './toy-react';
 
 class MyComponent extends Component{
+    constructor(){
+        super()
+    }
     render(){
         return (
             <div>

@@ -1,6 +1,10 @@
+const REANDER_TO_DOM = Symbol('render to dom');
 class TextWrapper{
     constructor(tagName){
         this.root = document.createTextNode(tagName);
+    }
+    [REANDER_TO_DOM](range){
+        range.insertNode(this.root);
     }
 }
 class ElementWrapper{
@@ -11,7 +15,14 @@ class ElementWrapper{
         this.root.setAttribute(name,value);
     }
     appendChild(component){
-        this.root.appendChild(component.root);
+        let range = document.createRange();
+        range.setStart(this.root,this.root.childNodes.length);
+        range.setEnd(this.root,this.root.childNodes.length);
+        component[REANDER_TO_DOM](range);
+    }
+    [REANDER_TO_DOM](range){
+        range.deleteContents();
+        range.insertNode(this.root);
     }
 }
 export class Component{
@@ -26,11 +37,8 @@ export class Component{
     appendChild(component){
         this.children.push(component);
     }
-    get root(){
-        if(!this._root){
-            this._root = this.render().root;
-        }
-        return this._root;
+    [REANDER_TO_DOM](range){
+        this.render()[REANDER_TO_DOM](range);
     }
 }
 
@@ -61,6 +69,10 @@ export function createElement(type,attribute,...children){
 }
 
 export function render(component,parentElement){
-    parentElement.appendChild(component.root);
+    let range = document.createRange();
+    range.setStart(parentElement,0);
+    range.setEnd(parentElement,parentElement.childNodes.length);
+    range.deleteContents();
+    component.render()[REANDER_TO_DOM](range);
 };
 
